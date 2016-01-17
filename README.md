@@ -13,5 +13,5 @@ Run the following in this directory:
 
 This will build and run the program, causing it to generate an image at `out.ppm`. To convert this image to `.png`, one can use the `convert` utility. An example of the output image looks like this:
 
-[!Example of raytracer output](http://i.imgur.com/b0D8Y30.png)
+![Example of raytracer output](./example.png)
 
