@@ -78,7 +78,8 @@ impl Not for Vector {
 }
 
 fn rand_float() -> f64 {
-	rand::random::<f64>()
+	// Shrink random number returned to reduce blur
+	rand::random::<f64>()*0.6
 }
 
 // The intersection test for line [o, v]
@@ -86,7 +87,7 @@ fn rand_float() -> f64 {
 //     Return 0 if no hit was found but ray goes upward
 //     Return 1 if no hit was found but ray goes downward
 fn intersect_test(origin: Vector, direction: Vector) -> (isize, f64, Vector) {
-	let spheres: [usize; 9] = [247570,280596,280600,249748,18578,18577,231184,16,16];
+	let spheres: [usize; 9] = [2074306875, 1143245124, 1201965380, 1151633732, 1151633732, 1126403644, 1075841028, 1075838980, 1075838980];
 
 	let mut i_flag: isize = 0;
 	let mut distance = 1000000000.0;
@@ -102,7 +103,7 @@ fn intersect_test(origin: Vector, direction: Vector) -> (isize, f64, Vector) {
 		i_flag = 1;
 	}
 
-	for k in 0..19 {
+	for k in 0..31 {
 		for j in 0..9 {
 			if (spheres[j] & 1usize<<k) > 0 {
 				// There is a sphere, but does the ray hit it?
@@ -204,7 +205,7 @@ fn main() {
 	print!("P6 512 512 255 ");
 
 	// Camera direction
-	let g = !Vector {x: -6.0, y: -16.0, z: 0.0};
+	let g = !Vector {x: -9.1, y: -16.0, z: 0.0};
 	// Camera up vector ... seams Z is pointing up :/ WTF !
 	let a = !(Vector {x: 0.0, y: 0.0, z: 1.0} ^ g.clone()) * 0.002;
 	// The right vector, obtained via traditional cross-product
@@ -233,7 +234,7 @@ fn main() {
 
 				// Set the camera focal point v(17, 16, 8) and cast the ray.
 				// Accumulate the color returned in the p variable.
-				p = sample(Vector {x:17.0, y:16.0, z:8.0} + t.clone(), // Ray origin
+				p = sample(Vector {x:33.0, y:23.0, z:8.0} + t.clone(), // Ray origin
 					!(t.clone()*-1.0 + (a.clone()*(rand_float()+x as f64) +
 						b.clone()*(y as f64 +rand_float())+c.clone())*16.0) // Ray direction with random deltas
 																// for stochastic sampling
@@ -244,6 +245,8 @@ fn main() {
 			image.push(p.y as u8);
 			image.push(p.z as u8);
 		}
+		let mut stderr = io::stderr();
+		let _ = writeln!(&mut stderr, "row: {}", __y);
 	}
 	let mut stdout = io::stdout();
 	stdout.write(image.as_ref()).unwrap();
